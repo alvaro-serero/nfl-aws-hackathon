@@ -1,99 +1,65 @@
-# Idées de projet — BDB Paris Side Quest
+# Le chip — BDB Paris Side Quest
 
-Testées sur les 122 matchs (39 000 routes de WR/TE/RB, 7 583 passes lancées, cible retrouvée dans 93 % des cas via
-`playDescription`). Notes sur la grille du jury, pertinence football comptée double (départage + prix finaliste).
+Décision d'équipe (14 h 20) : on part sur une stat liée au chip (`pff_blockType == "CH"` : un TE ou un RB donne un coup
+à un pass rusher avant de partir en route). Les idées non liées au chip (Time-to-Win, mismatch du TE, release vs press,
+etc.) sont retirées ; elles restent dans l'historique git (commit `268a685`).
 
-| # | Idée | Pertinence ×2 | Exécution | Communication | Originalité | Total /25 |
-|---|---|---|---|---|---|---|
-| 1 | **Le chip oublié : soupape anti-sack** (TE/RB) | 10 | 4 | 5 | 3 | **22** |
-| 2 | **Time-to-Win** (WR/TE) | 8 | 4 | 4 | 4 | **20** |
-| 3 | **Le vrai mismatch du TE** (man) | 8 | 4 | 4 | 3 | **19** |
+## Ce qu'on sait, du rusher à la décision du QB
 
-## 1. Le chip oublié (TE/RB) — idée retenue pour l'instant
+| Étage | Question | Résultat | Script | Déjà publié ? |
+|---|---|---|---|---|
+| 1. Le rusher visé | Le chip gêne-t-il le rusher qu'il touche ? | **Oui** : même rusher, pression sur 10,5 % de ses rushs chippés contre 14,1 % sinon (**-26 %**, IC95 -6,0 à -1,3 pts ; 55 rushers ; 67 % moins efficaces) | `coach.py` | NGS publie le **temps** avant pression (3,43 s contre 2,84 s), pas le **taux** de pression du même rusher |
+| 2. L'action | Que devient l'action avec un chip ? | Le QB lance plus tard (**médiane 3,1 s contre 2,6 s**) et plus loin : **+0,8 yd** par action (7,3 contre 6,6) ; mais pression 43 % contre 35 % et **sacks 8,4 % contre 6,1 %** | `coach.py`, `decision.py` | NGS : +0,5 s et 9,3 contre 7,2 air yards |
+| 3. La décision du QB | Doit-il lancer au joueur qui a chippé ? | **En temps normal, non** : la cible choisie vaut **+4,0 yd** attendus (IC95 3,7 à 4,3 ; 928 passes). **Sur un sack, oui** : dans **36 des 88 sacks** avec chip, le TE/RB qui a chippé était démarqué (≥ 3 yd) au-delà de la ligne depuis ≥ 1 s (36 % contre 23 % des autres receveurs à profondeur égale) ; sack moyen -7,4 yd | `decision.py` | Non trouvé |
 
-**Décision (coach de QB)** : sur une action avec chip, quand le QB doit-il lancer au TE/RB qui a chippé ?
+## Est-ce cohérent ?
 
-### Ce qui a été testé, dans l'ordre
-1. **Première intuition (abandonnée)** : « le joueur qui chippe est le plus démarqué du terrain, et le QB l'oublie ».
-   Il est bien démarqué au lancer (TE : 5,3 yd contre 2,5 yd sans chip) mais **court** (TE : 1,9 yd de profondeur
-   contre 5,9 yd) ; il n'est démarqué au-delà de la ligne du 1er down que dans 2 % des cas (12 % sans chip).
-2. **À profondeur égale** : il reste plus démarqué (+1,55 yd) et ciblé 32 % moins souvent que prévu (159 contre 234,
-   z = -5,5). Ce n'est pas faute d'options : 4,8 receveurs en route avec ou sans chip.
-3. **Analyse de décision** (`decision.py`) : un modèle de complétion (profondeur + séparation, entraîné semaines 1-6,
-   calibré semaines 7-8) donne la valeur de chaque option ; on compare, dans la même action, l'option « chippeur » à
-   l'option choisie par le QB.
+Oui, les trois étages racontent une seule histoire :
 
-### Résultat
-- **En temps normal, le QB a raison de l'ignorer** : sur 928 passes où il n'est pas ciblé, l'option choisie vaut
-  +4,0 yards attendus (IC95 : 3,7 à 4,3). Sur 3e et long : +16 pts de probabilité de réussite.
-- **Mais sur les sacks, c'est la soupape** (chiffres corrigés après relecture `critic`) : sur 88 sacks avec chip, le
-  TE/RB qui a chippé était démarqué (≥ 3 yd) au-delà de la ligne depuis ≥ 1 s dans 36 cas ; 36 % des joueurs qui
-  chippent contre 23 % des autres receveurs à profondeur égale. Comparé aux autres receveurs des mêmes actions
-  (plus profonds), l'écart se réduit à 36 % contre 30 % et n'est plus significatif. Sack moyen : -7,4 yd.
-- **Corrigé** : l'ancien « 65 % contre 39 % » comptait comme démarqués des joueurs encore derrière la ligne et comparait
-  des profondeurs très différentes ; il est abandonné.
-- **Recommandation** : faire du joueur qui a chippé la lecture de secours de la progression ; vers 3 s, lâcher le
-  ballon vers lui plutôt que de le garder.
+1. Le chip **fait son travail** sur le rusher visé (-26 % de pression) et achète ~0,5 s.
+2. Le QB **utilise ce temps pour chercher plus loin** : plus de yards quand ça passe (+0,8 yd), c'est le bon réflexe
+   en temps normal (étage 3 : +4,0 yd pour la cible choisie).
+3. Mais l'action dure plus longtemps, la pression finit par arriver d'ailleurs, et elle **finit plus souvent en sack**.
+   Dans 36 de ces sacks, la soupape (le joueur qui a chippé) était ouverte depuis plus d'une seconde.
 
-### Validation externe (nos chiffres retrouvent ceux de NGS)
-- Réception après un chip : 82,4 % réels (IC95 76-88 %, n = 159), 82,6 % prédits par le modèle entraîné sur les semaines 1-6 ; NGS publie 80,2 %.
-- Temps avant le lancer (médiane) : 3,1 s avec chip contre 2,6 s sans, soit la « demi-seconde » de NGS.
+Les deux paradoxes apparents s'expliquent :
+- **Plus de pression avec chip alors que le rusher visé en met moins** : le chip est appelé dans les situations
+  difficiles (33 % de 3e et long contre 18 % sans chip) et l'action dure plus longtemps. C'est un biais de sélection,
+  d'où la comparaison « même rusher » de l'étage 1.
+- **Plus de yards mais moins de réussite** (44 % contre 49 %) : passes plus profondes, donc plus de variance, et plus
+  de 3e et long.
 
-### Originalité : déjà connu ou pas ?
-- **Le concept est connu des coachs** : le « checkdown » (passe courte au RB/TE en dernier recours, souvent sous
-  pression) et le « check-release » (le RB bloque puis sort en route) sont des principes enseignés partout
-  ([Checkdown](https://en.wikipedia.org/wiki/Checkdown), [Fox Sports, hot reads](https://amp.foxsports.com/stories/other/overcoming-the-blitz)).
-  Dire « le RB est une soupape » n'est donc pas nouveau.
-- **Ce qui est publié sur le chip** : NGS (bénéfice en protection, +0,5 s, 80,2 % de réception, passes plus profondes
-  sur les actions avec chip : 9,3 contre 7,2 air yards) et PFF (« chip percentage » des pass rushers).
-  ([NFL.com](https://www.nfl.com/_amp/the-secret-weapon-nfl-offenses-are-using-to-buy-qbs-an-extra-half-second),
-  [PFF](https://www.pff.com/news/nfl-chip-percentage-week-5))
-- **Ce qu'on n'a trouvé nulle part** : la mesure, au tracking, de la soupape après un chip au moment du sack (36 sacks sur 88), et la comparaison de décision « chippeur contre cible choisie » dans la même action.
-- **BDB 2023** : thème protection / pass rush ; aucun notebook sur le chip trouvé, mais la recherche est polluée par
-  « chip » (les puces de tracking). Pas une preuve d'absence.
-- **Verdict** : principe connu, **quantification nouvelle**. Originalité notée 3/5 (au lieu de 4). À présenter comme
-  « on mesure, pour la première fois au tracking, ce que coûte de ne pas utiliser la soupape après un chip ».
+**Message pour le coach** : le chip achète du temps ; garder le joueur qui a chippé comme lecture de secours vers 3 s
+transforme une partie des sacks (-7,4 yd) en passes courtes (≈ 80 % de réception selon NGS, 82 % chez nous).
 
-### Limites
-- Modèle simple : ignore la vitesse de retour du défenseur et la visibilité du QB sous pression.
-- 8 semaines de 2021, 88 sacks avec chip (TE/RB).
+## Validation externe
 
-### Livrables (poussés, relus par `critic`)
-`decision.py` (analyse), `chart.py` → `insight.png`, `animate_sack.py` → `chip_sack.png` / `chip_sack.html`, `README.md`.
+- Réception après un chip : 82,4 % (IC95 76-88 %, n = 159), 82,6 % prédits par le modèle entraîné sur les semaines
+  1-6 ; NGS publie 80,2 %.
+- Temps avant le lancer : +0,5 s avec chip, comme NGS.
+- Relecture `critic` : signe de la profondeur, temps démarqué, absence de fuite du modèle et cibles vérifiés ;
+  l'ancien « 65 % contre 39 % » (joueurs derrière la ligne comptés comme démarqués) a été abandonné.
 
-## 2. Time-to-Win (WR/TE)
+## Originalité
 
-**Décision** : quel receveur bat son défenseur assez tôt pour le timing du QB (lancer médian à 2,6 s) ?
+- **Connu** : le « checkdown » et le « check-release » (le RB/TE comme soupape) sont des principes de coaching ;
+  NGS a publié le temps avant pression, les air yards et le taux de réception après un chip.
+- **Nouveau** (non trouvé ailleurs) : la pression du **même rusher** chippé ou non, et la mesure au tracking de la
+  soupape ouverte pendant les sacks avec chip.
+- À présenter comme « on mesure le bilan complet du chip, du rusher à la décision du QB », pas comme « on découvre
+  la soupape ».
 
-- Le Time-to-Open du document d'idées ne marche pas tel quel : le temps médian vaut 0 s, parce que les receveurs sont
-  déjà à 2,5 yd de tout défenseur au snap (coussin).
-- **Redéfinition** : temps pour se ré-ouvrir (≥ 2,5 yd) **après avoir été couvert**, face aux défenseurs en couverture seulement.
-- 60 % des routes sont couvertes à un moment, et 21 % d'entre elles se ré-ouvrent avant le lancer
-  (médiane : 2,0 s pour les TE, 2,2 s pour les WR).
-- **Lien avec une issue réelle** : quand il est ciblé, un receveur ré-ouvert est complété à **65 %**, contre 43 % s'il ne s'est jamais ré-ouvert.
-  Le taux de ciblage, lui, varie peu.
-- **Pre-mortem** : le seuil de 2,5 yd est arbitraire, et la notion de « couvert » est floue en zone. Parade : se limiter au man.
+## Limites
 
-## 3. Le vrai mismatch du TE (couverture man)
+- Modèle de valeur simple (profondeur + séparation), sans la vitesse de retour du défenseur ni la visibilité du QB.
+- 8 semaines de 2021 ; 88 sacks avec chip ; 55 rushers pour la comparaison « même rusher ».
+- Sur les mêmes actions (receveurs plus profonds), l'écart « soupape » se réduit à 36 % contre 30 % (non significatif).
+- Étage 2 : comparaison brute, biaisée par la situation ; seul l'étage 1 est contrôlé (même rusher).
 
-**Décision** : contre quel défenseur un coordinateur offensif doit-il chercher son TE ?
+## Livrables
 
-| Défenseur qui suit le TE | Séparation au lancer | Complété si ciblé |
-|---|---|---|
-| Safety | 1,27 yd | 49 % |
-| Linebacker | 1,77 yd | 64 % |
-| Cornerback | 1,72 yd | 55 % |
-
-- **Insight** : contrairement à l'idée reçue, le linebacker n'est pas plus facile à battre en séparation qu'un cornerback ;
-  la vraie bête noire du TE, c'est le safety.
-- **Pre-mortem** : environ 100 ciblages par groupe, donc des marges d'erreur larges.
-
-## Idées écartées
-
-- **Release vs press** (WR extérieurs) : seulement 11 joueurs ont au moins 20 routes en press.
-- **Hot route vs blitz** (5 rushers ou plus) : pas de signal net.
-- **Soupape sous pression** (RB/TE) : aucune différence de séparation avec ou sans pression.
-- **Démarqué ignoré** : 29 % des actions en ont un, surtout des RB en check-down ; trop bruité sans filtre de profondeur.
+`decision.py` (étage 3), `coach.py` (étages 1-2), `chart.py` → `insight.png`, `animate_sack.py` → `chip_sack.png` /
+`chip_sack.html`, `README.md`.
 
 ## Pièges des données
 
@@ -102,3 +68,4 @@ Testées sur les 122 matchs (39 000 routes de WR/TE/RB, 7 583 passes lancées, c
 - Le tracking s'arrête 0,3 à 0,5 s après le lancer : rien après la réception (pas de YAC).
 - Séparation : ne garder que les défenseurs `Coverage`, sinon les pass rushers faussent la mesure pour les TE.
 - Le ballon correspond aux lignes où `nflId` est NA ; normaliser `playDirection` avant tout calcul de profondeur.
+- Exclure les actions annulées par une pénalité (`playDescription` contient « No Play »).
