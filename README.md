@@ -5,6 +5,8 @@ Il fait baisser la pression de ce rusher (-26 % avec un TE en ligne), mais n'év
 Notre conseil au coach de QB : vers 3 secondes, regarder le joueur qui a chippé, car il était libre dans 36 des 88 sacks avec chip.
 Limites : 8 semaines de 2021, et l'appel de jeu est inconnu.
 
+**Démo en ligne de l'outil « Chip Advisor » : https://chip-advisor-rouge.vercel.app**
+
 ![Pression du rusher selon le type de chip](figures/A_type.png)
 ![Le joueur qui a chippé est la soupape sur les sacks](insight.png)
 
@@ -13,5 +15,4 @@ Limites : 8 semaines de 2021, et l'appel de jeu est inconnu.
 ```bash
 pip install -r requirements.txt
 python src/build_tables.py && python analysis/mecanique.py && python decision.py && python coach.py && python chart.py
-streamlit run app/advisor.py   # outil interactif « Chip Advisor »
 ```
