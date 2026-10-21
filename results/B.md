@@ -9,8 +9,8 @@
 Progression normale d'abord (la cible choisie vaut +4,0 yd). Vers 3 s, si la poche se referme, regarder le joueur qui a chippé avant de subir le sack : c'est la soupape (démarqué dans 36 des 88 sacks avec chip). Tendance à confirmer : plus souvent libre aligné en slot/large (48 %) que dans le backfield (24 %).
 
 ## Limites
-- 36 % contre 30 % sur les mêmes actions : face aux autres receveurs des mêmes sacks, l'écart n'est que de 6 pts (pas d'IC calculé), contre 13 pts à profondeur égale. Source : `decision.py`, « autres, mêmes actions 0.299 ».
-- Petits effectifs : 88 sacks, 29 à 42 joueurs par type de chip (aucun sous-groupe < 20, mais pas d'IC par type) ; 8 semaines de 2021 ; modèle de valeur simple (profondeur + séparation) ; tracking coupé ~0,4 s après le lancer.
+- 36 % contre 30 % sur les mêmes actions : face aux autres receveurs des mêmes sacks, l'avantage du joueur qui a chippé se réduit (pas d'IC calculé) ; le 23 % compare à profondeur égale sur tous les sacks. Source : `decision.py`, « autres, mêmes actions 0.299 ».
+- Petits effectifs : 88 sacks, 29 à 42 joueurs par type de chip (aucun sous-groupe < 20, mais pas d'IC par type) ; 8 semaines de 2021 ; modèle de valeur simple (profondeur + séparation) ; tracking coupé peu après le lancer.
 - Validation externe : réception après un chip 82,4 % (IC95 76-88 %, n = 159), cohérente avec les 80,2 % publiés par NGS. Source : `decision.py`, « réception réelle après un chip : 0.824 (IC95 0.76-0.88), n = 159 ».
 
 ## Figures
