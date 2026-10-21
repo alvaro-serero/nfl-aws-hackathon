@@ -25,8 +25,11 @@ Animation de cette action : `chip_sack.html` (à télécharger puis ouvrir dans 
 ## Comment lancer
 
 ```bash
-pip install pandas numpy pyarrow scikit-learn matplotlib plotly
-python decision.py      # analyse (lit data/, ~1 min) -> chiffres + decision.parquet, duel.parquet
-python chart.py         # graphique phare -> insight.png
-python animate_sack.py  # animation d'un sack avec chip -> chip_sack.html / chip_sack.png
+pip install -r requirements.txt
+python src/build_tables.py    # tables communes -> outputs/chips.csv, outputs/edge_rushers.csv (~30 s)
+python decision.py            # décision du QB, lit outputs/chips.csv (~1 min) -> decision.parquet, duel.parquet
+python coach.py               # rusher visé (même rusher) et action à situation égale
+python chart.py               # graphique phare -> insight.png
+python animate_sack.py        # animation d'un sack avec chip -> chip_sack.html / chip_sack.png
+python analysis/mecanique.py  # type et durée du chip -> figures/A_*.png, results/A.md
 ```
