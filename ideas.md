@@ -19,8 +19,9 @@ Oui, les trois étages racontent une seule histoire :
 1. Le chip **fait son travail** sur le rusher visé (-26 % de pression) et achète ~0,5 s.
 2. Le QB **utilise ce temps pour chercher plus loin** : plus de yards quand ça passe (+0,8 yd), c'est le bon réflexe
    en temps normal (étage 3 : +4,0 yd pour la cible choisie).
-3. Mais l'action dure plus longtemps, la pression finit par arriver d'ailleurs, et elle **finit plus souvent en sack**.
-   Dans 36 de ces sacks, la soupape (le joueur qui a chippé) était ouverte depuis plus d'une seconde.
+3. Mais l'action dure plus longtemps et la pression finit par arriver d'ailleurs (+27 % sur les rushers non chippés) ;
+   à situation égale, les sacks ne sont pas significativement plus nombreux (+1,7 pt, IC95 -0,1 à +3,4).
+   Dans 36 des 88 sacks avec chip, la soupape (le joueur qui a chippé) était ouverte depuis plus d'une seconde.
 
 Les deux paradoxes apparents s'expliquent :
 - **Plus de pression avec chip alors que le rusher visé en met moins** : le chip est appelé dans les situations
