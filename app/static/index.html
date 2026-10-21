@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chip Advisor</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 34'%3E%3Crect width='34' height='34' rx='8' fill='%2313212E'/%3E%3Ccircle cx='11' cy='17' r='5' fill='none' stroke='%23FFD23F' stroke-width='3'/%3E%3Cpath d='M20 11l8 12M28 11l-8 12' stroke='%23E8EEF3' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header class="bar">
+  <div class="brand">
+    <svg viewBox="0 0 34 22" aria-hidden="true"><circle cx="8" cy="11" r="6" fill="none" stroke="#FFD23F" stroke-width="2.5"/><path d="M14 11h5" stroke="#FFD23F" stroke-width="2.5" stroke-linecap="round"/><path d="M23 5l9 12M32 5l-9 12" stroke="#E8EEF3" stroke-width="2.5" stroke-linecap="round"/></svg>
+    Chip Advisor
+  </div>
+  <div class="controls">
+    <fieldset class="ctl"><legend>Situation</legend><div class="seg" id="sit"></div></fieldset>
+    <fieldset class="ctl"><legend>Edge rusher adverse</legend>
+      <div class="ctl-row"><div class="seg" id="q"></div>
+        <input class="search" id="rusher" list="rushers" placeholder="Chercher un rusher" aria-label="Chercher un rusher par son nom" autocomplete="off">
+        <datalist id="rushers"></datalist></div>
+    </fieldset>
+    <fieldset class="ctl"><legend>Joueur pour chipper</legend><div class="seg" id="player"></div></fieldset>
+  </div>
+</header>
+
+<main>
+  <section class="verdict" aria-live="polite">
+    <p class="context" id="context"></p>
+    <h1 class="v-title" id="v-title">…</h1>
+    <p class="v-sub" id="v-sub"></p>
+    <div class="delta">
+      <div class="num before"><strong id="n-before">–</strong><span>sans chip</span></div>
+      <svg viewBox="0 0 36 20" aria-hidden="true"><path d="M2 10h28M22 3l8 7-8 7" fill="none" stroke="#5E6F80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="num after"><strong id="n-after">–</strong><span id="l-after">avec chip</span></div>
+    </div>
+    <p class="caption">Snaps où le rusher visé met la pression sur le QB</p>
+    <p class="warn" id="warn" hidden></p>
+    <div class="planb" id="planb">
+      <svg viewBox="0 0 30 30" aria-hidden="true"><ellipse cx="15" cy="15" rx="12" ry="7.5" transform="rotate(-35 15 15)" fill="#8B5A2B"/><path d="M11 18l8-6M13 13.5l2 2M15 12l2 2M17 10.5l2 2" stroke="#F3F6F1" stroke-width="1.4" stroke-linecap="round"/></svg>
+      <div><strong>Plan B à 3 secondes</strong><p id="planb-text"></p></div>
+    </div>
+    <div class="bars">
+      <h2>Pression du rusher selon l’option</h2>
+      <div id="bars"></div>
+    </div>
+    <div class="brief">
+      <button type="button" id="brief-btn">Rédiger le briefing</button>
+      <blockquote id="brief-text" hidden></blockquote>
+      <p class="brief-src" id="brief-src"></p>
+    </div>
+  </section>
+
+  <section class="film">
+    <div class="film-head"><h2 id="play-title">Chargement de l’action…</h2><p id="play-sub"></p></div>
+    <div class="stage">
+      <svg id="field" viewBox="0 0 533 340" role="img" aria-label="Replay de l’action vue de derrière l’attaque"></svg>
+      <p class="phase" id="phase"></p>
+    </div>
+    <div class="transport">
+      <button type="button" class="icon-btn" id="playpause" aria-label="Lecture"></button>
+      <div class="track-wrap">
+        <div class="band" id="band"></div>
+        <input type="range" id="scrub" min="0" max="1" step="0.02" value="0" aria-label="Temps de l’action">
+        <div id="ticks"></div>
+      </div>
+      <span class="clock" id="clock">0,0 s</span>
+      <button type="button" class="speed" id="speed">Vitesse 1×</button>
+    </div>
+    <div class="legend">
+      <span><i class="dot off"></i>Attaque</span><span><i class="dot def"></i>Défense</span>
+      <span><i class="ring chip"></i>Joueur qui chippe</span><span><i class="ring rush"></i>Rusher visé</span>
+      <span><i class="line los"></i>Ligne de mêlée</span><span><i class="line fd"></i>1er down</span>
+    </div>
+    <h3 class="plays-title">Actions réelles pour ce choix</h3>
+    <div class="plays" id="plays"></div>
+  </section>
+</main>
+<script src="/static/app.js"></script>
+</body>
+</html>
