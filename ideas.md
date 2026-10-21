@@ -5,36 +5,60 @@ Testées sur les 122 matchs (39 000 routes de WR/TE/RB, 7 583 passes lancées, c
 
 | # | Idée | Pertinence ×2 | Exécution | Communication | Originalité | Total /25 |
 |---|---|---|---|---|---|---|
-| 1 | **Le chip oublié** (TE/RB) | 10 | 4 | 5 | 4 | **23** |
+| 1 | **Le chip oublié : soupape anti-sack** (TE/RB) | 10 | 4 | 5 | 3 | **22** |
 | 2 | **Time-to-Win** (WR/TE) | 8 | 4 | 4 | 4 | **20** |
 | 3 | **Le vrai mismatch du TE** (man) | 8 | 4 | 4 | 3 | **19** |
 
-## 1. Le chip oublié (TE/RB)
+## 1. Le chip oublié (TE/RB) — idée retenue pour l'instant
 
-**Décision** : un coach doit-il faire chipper son TE ou son RB avant de le lancer en route ?
+**Décision (coach de QB)** : sur une action avec chip, quand le QB doit-il lancer au TE/RB qui a chippé ?
 
-| | Séparation au lancer | Démarqué ≥ 3 yd | Ciblé |
-|---|---|---|---|
-| TE qui chippe (`pff_blockType == "CH"`) | 5,3 yd | 75 % | 15,5 % |
-| TE sans chip | 2,5 yd | 41 % | 19,8 % |
-| RB qui chippe | 8,3 yd | 88 % | 11,6 % |
-| RB sans chip | 5,9 yd | 76 % | 19,3 % |
+### Ce qui a été testé, dans l'ordre
+1. **Première intuition (abandonnée)** : « le joueur qui chippe est le plus démarqué du terrain, et le QB l'oublie ».
+   Il est bien démarqué au lancer (TE : 5,3 yd contre 2,5 yd sans chip) mais **court** (TE : 1,9 yd de profondeur
+   contre 5,9 yd) ; il n'est démarqué au-delà de la ligne du 1er down que dans 2 % des cas (12 % sans chip).
+2. **À profondeur égale** : il reste plus démarqué (+1,55 yd) et ciblé 32 % moins souvent que prévu (159 contre 234,
+   z = -5,5). Ce n'est pas faute d'options : 4,8 receveurs en route avec ou sans chip.
+3. **Analyse de décision** (`decision.py`) : un modèle de complétion (profondeur + séparation, entraîné semaines 1-6,
+   calibré semaines 7-8) donne la valeur de chaque option ; on compare, dans la même action, l'option « chippeur » à
+   l'option choisie par le QB.
 
-- Quand on le cible quand même, le joueur qui a chippé est complété à 82 %, contre 70 % sans chip (159 ciblages).
-- **Insight** : chipper ne coûte pas de séparation, au contraire. Le joueur qui chippe devient le plus démarqué du terrain,
-  parce que la défense l'oublie ; mais le QB l'oublie aussi. C'est une option ouverte que les QB ignorent.
-- **Déjà publié par NGS** ([NFL.com](https://www.nfl.com/_amp/the-secret-weapon-nfl-offenses-are-using-to-buy-qbs-an-extra-half-second)) :
-  - le bénéfice pour la protection (pression à 3,43 s contre 2,84 s en duel simple) ;
-  - le taux de réception après un chip : 80,2 %, contre 74,7 % pour l'ensemble des RB et TE.
-  
-  Notre 82 % n'est donc **pas original**. On le cite comme source, et il devient un argument : quand on lui lance, ça marche.
-- **Notre angle original** : la séparation au lancer après un chip (le plus démarqué du terrain) mise face à son taux de
-  ciblage (30 à 40 % plus bas). Aucune source trouvée ne relie les deux.
-- **Échantillon** : 1 155 routes après un chip, 41 joueurs avec au moins 10 chips, 32 équipes.
-- **Pre-mortem** : il est démarqué parce qu'il part tard et court (dans le flat), donc « ouvert mais inutile ».
-  À tester en premier : comparer à profondeur égale.
-- **Visuel prévu** : animer une vraie action de chip à partir du tracking (le TE touche le rusher, part en route,
-  se retrouve seul), plutôt qu'une vidéo externe.
+### Résultat
+- **En temps normal, le QB a raison de l'ignorer** : sur 928 passes où il n'est pas ciblé, l'option choisie vaut
+  +3,4 yards attendus (IC95 : 3,2 à 3,7) et +6,9 pts de probabilité de réussite. Sur 3e et long : +16 pts.
+- **Mais sur les sacks, c'est la soupape** : sur 97 sacks avec chip, le joueur qui chippe était démarqué (≥ 3 yd) au
+  moment du sack dans **65 %** des cas, contre 39 % pour les autres receveurs ; démarqué depuis ≥ 1 s au-delà de la
+  ligne : 37 % contre 24 % (z ≈ 3). Une passe vers lui valait ≈ +6 yards attendus (72 % de complétion), au lieu d'un
+  sack moyen de -7,4 yards.
+- **Recommandation** : faire du joueur qui a chippé la lecture de secours de la progression ; vers 3 s, lâcher le
+  ballon vers lui plutôt que de le garder.
+
+### Validation externe (nos chiffres retrouvent ceux de NGS)
+- Réception après un chip : 82,4 % réels, 82,3 % prédits par le modèle ; NGS publie 80,2 %.
+- Temps avant le lancer : 3,1 s avec chip contre 2,6 s sans, soit la « demi-seconde » de NGS.
+
+### Originalité : déjà connu ou pas ?
+- **Le concept est connu des coachs** : le « checkdown » (passe courte au RB/TE en dernier recours, souvent sous
+  pression) et le « check-release » (le RB bloque puis sort en route) sont des principes enseignés partout
+  ([Checkdown](https://en.wikipedia.org/wiki/Checkdown), [Fox Sports, hot reads](https://amp.foxsports.com/stories/other/overcoming-the-blitz)).
+  Dire « le RB est une soupape » n'est donc pas nouveau.
+- **Ce qui est publié sur le chip** : NGS (bénéfice en protection, +0,5 s, 80,2 % de réception, passes plus profondes
+  sur les actions avec chip : 9,3 contre 7,2 air yards) et PFF (« chip percentage » des pass rushers).
+  ([NFL.com](https://www.nfl.com/_amp/the-secret-weapon-nfl-offenses-are-using-to-buy-qbs-an-extra-half-second),
+  [PFF](https://www.pff.com/news/nfl-chip-percentage-week-5))
+- **Ce qu'on n'a trouvé nulle part** : la mesure, au tracking, de la soupape après un chip au moment du sack (65 % contre
+  39 %), et la comparaison de décision « chippeur contre cible choisie » dans la même action.
+- **BDB 2023** : thème protection / pass rush ; aucun notebook sur le chip trouvé, mais la recherche est polluée par
+  « chip » (les puces de tracking). Pas une preuve d'absence.
+- **Verdict** : principe connu, **quantification nouvelle**. Originalité notée 3/5 (au lieu de 4). À présenter comme
+  « on mesure, pour la première fois au tracking, ce que coûte de ne pas utiliser la soupape après un chip ».
+
+### Limites
+- Modèle simple : ignore la vitesse de retour du défenseur et la visibilité du QB sous pression.
+- 8 semaines de 2021, 97 sacks avec chip.
+
+### Livrables prêts (non poussés, relecture `critic` en cours)
+`decision.py` (analyse), `chart.py` → `insight.png`, `animate_chip.py` / `animate_sack.py` → animations, `README.md`.
 
 ## 2. Time-to-Win (WR/TE)
 
