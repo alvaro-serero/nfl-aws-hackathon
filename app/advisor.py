@@ -136,9 +136,10 @@ def chart(t, player):
         hovertemplate="%{y}<br>Pression : %{x:.1f} %<br>IC95 : %{customdata[1]:.1f} - %{customdata[2]:.1f} %"
                       "<br>n = %{customdata[0]}<extra></extra>",
         text=[f"{fr(100 * v)} %  (n={n})" for v, n in zip(t["Pression du rusher"], t.n)],
-        textposition="outside", cliponaxis=False,
+        textposition="inside", insidetextanchor="start", constraintext="none",
+        textfont=dict(color=["white" if o == focus else "#0b0b0b" for o in t.index]),
     ))
-    fig.update_layout(height=300, margin=dict(l=10, r=90, t=10, b=30), bargap=0.35,
+    fig.update_layout(height=300, margin=dict(l=10, r=20, t=10, b=30), bargap=0.3,
                       xaxis=dict(title="Pression du rusher visé (%), IC95", rangemode="tozero", showgrid=True),
                       yaxis=dict(showgrid=False))
     return fig
