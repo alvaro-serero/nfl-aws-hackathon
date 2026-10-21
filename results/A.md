@@ -10,11 +10,11 @@ Généré par `python analysis/mecanique.py` (ne pas éditer à la main). Semain
 
 ## Pour le coach
 
-Contre un edge rusher dangereux, faites chipper le TE en ligne ou le running back plutôt qu'un receveur et demandez un contact de plus d'une seconde : sa pression passe de 12,9 % à 8,5 %, mais le joueur part en route à 2,20 s : c'est une lecture tardive (soupape), pas une première option.
+Contre un edge rusher dangereux, faites chipper le TE en ligne ou le running back plutôt qu'un joueur aligné en slot ou large et demandez un contact de plus d'une seconde : sa pression passe de 12,9 % à 8,5 %, mais le joueur part en route à 2,20 s : c'est une lecture tardive (soupape), pas une première option.
 
 ## Figures
 
-- `figures/A_type.png` : pression de l'edge rusher selon le type de chip (TE, RB, receveur), avec l'effet ajusté.
+- `figures/A_type.png` : pression de l'edge rusher selon le type de chip (TE en ligne, backfield, aligné en slot ou large), avec l'effet ajusté.
 - `figures/A_duree.png` : le compromis, la pression baisse quand le chip dure, le départ en route recule.
 - `figures/A_quartile.png` : chippé contre non chippé, par niveau du rusher (Q4 = élite).
 
@@ -26,7 +26,7 @@ Non chippé : 12,8 % de pression (n = 20 790).
 |---|---|---|---|---|
 | TE en ligne | 499 | 10,2 % | −3,6 pts | 0,71 [0,53 ; 0,90] |
 | Running back (backfield) | 446 | 10,1 % | −3,3 pts | 0,72 [0,51 ; 0,97] |
-| Receveur slot / large | 504 | 12,3 % | −1,7 pts | 0,86 [0,65 ; 1,06] |
+| Aligné en slot / large | 504 | 12,3 % | −1,7 pts | 0,86 [0,65 ; 1,06] |
 
 Coût pour la route, par type de chip (chips avec contact détecté) :
 
@@ -34,7 +34,7 @@ Coût pour la route, par type de chip (chips avec contact détecté) :
 |---|---|---|---|---|
 | TE en ligne | 493 | 1,50 s | 16,5 % (n = 424) | 10,3 % |
 | Running back (backfield) | 441 | 2,20 s | 11,3 % (n = 382) | 10,4 % |
-| Receveur slot / large | 491 | 1,40 s | 14,5 % (n = 401) | 12,4 % |
+| Aligné en slot / large | 491 | 1,40 s | 14,5 % (n = 401) | 12,4 % |
 
 Coût pour la route, par durée du contact :
 

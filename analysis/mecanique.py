@@ -206,7 +206,7 @@ def regression_duree(chips):
 DUR_BINS = [0, 0.3, 0.6, 1.0, np.inf]                      # ]a ; b] : 0,3 s tombe dans « ≤ 0,3 s »
 DUR_LABELS = ["≤ 0,3 s", "0,3 à 0,6 s", "0,6 à 1,0 s", "> 1,0 s"]
 TYPE_LABELS = {"none": "Non chippé", "inline_TE": "TE en ligne", "backfield": "Running back\n(backfield)",
-               "slot_wide": "Receveur\nslot / large"}
+               "slot_wide": "Aligné en\nslot / large"}
 GREY, BLUE, ORANGE = "#9e9e9e", "#1f5fa8", "#e07b00"
 SMALL_N = 30
 
@@ -296,7 +296,7 @@ def plot_type(edges, res1):
     ax.set_ylabel("Taux de pression de l'edge rusher (%)")
     ax.set_ylim(0, max(r.hi.max(), r.rate.max()) * 1.3)
     fr_axis(ax)
-    ax.set_title("Chipper l'edge rusher réduit sa pression, surtout avec un TE ou un running back",
+    ax.set_title("Chipper l'edge rusher réduit sa pression, surtout depuis la ligne ou le backfield",
                  fontsize=12, fontweight="bold", loc="left")
     fig.text(0.01, 0.01, "Barres : taux observé, IC 95 % (bootstrap par match). « Effet ajusté » : écart de pression "
              "estimé à qualité de rusher, down, distance\net play action égaux (régression logistique). "
@@ -393,8 +393,8 @@ def print_rates(title, r, extra=None):
 
 
 # ---------------------------------------------------------------- coût route, pression de l'action, rapport
-MD_TYPE = {"inline_TE": "TE en ligne", "backfield": "Running back (backfield)", "slot_wide": "Receveur slot / large"}
-COACH_TYPE = {"inline_TE": "le TE en ligne", "backfield": "le running back", "slot_wide": "le receveur du slot"}
+MD_TYPE = {"inline_TE": "TE en ligne", "backfield": "Running back (backfield)", "slot_wide": "Aligné en slot / large"}
+COACH_TYPE = {"inline_TE": "le TE en ligne", "backfield": "le running back", "slot_wide": "le joueur aligné en slot"}
 
 
 def route_cost(chips, by, cats):
@@ -456,7 +456,7 @@ def key_numbers(res1, r_type, res2, rc_dur):
 def write_report(res1, r_type, res2, robust, rc_type, rc_dur, pp, pp_overall, pp_spread, kn):
     RESULTS.mkdir(exist_ok=True)
     who = " ou ".join(kn["sig_types"]) if kn["sig_types"] else COACH_TYPE[kn["best"]]
-    coach = (f"Contre un edge rusher dangereux, faites chipper {who} plutôt qu'un receveur et demandez un "
+    coach = (f"Contre un edge rusher dangereux, faites chipper {who} plutôt qu'un joueur aligné en slot ou large et demandez un "
              f"contact de plus d'une seconde : sa pression passe de {fr(kn['mid'].pressure)} % à "
              f"{fr(kn['long'].pressure)} %, mais le joueur part en route à {fr(kn['long'].release, 2)} s : "
              f"c'est une lecture tardive (soupape), pas une première option.")
@@ -490,7 +490,7 @@ Généré par `python analysis/mecanique.py` (ne pas éditer à la main). Semain
 
 ## Figures
 
-- `figures/A_type.png` : pression de l'edge rusher selon le type de chip (TE, RB, receveur), avec l'effet ajusté.
+- `figures/A_type.png` : pression de l'edge rusher selon le type de chip (TE en ligne, backfield, aligné en slot ou large), avec l'effet ajusté.
 - `figures/A_duree.png` : le compromis, la pression baisse quand le chip dure, le départ en route recule.
 - `figures/A_quartile.png` : chippé contre non chippé, par niveau du rusher (Q4 = élite).
 
