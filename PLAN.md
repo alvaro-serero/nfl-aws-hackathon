@@ -11,11 +11,11 @@ Quatre étages, chacun appuyé sur un chiffre :
 
 | Étage | Question | Statut | Source |
 |---|---|---|---|
-| 1. Le rusher | Le chip gêne-t-il le rusher visé ? | **Fait** : -26 % de pression, même rusher (IC95 -6,0 à -1,3 pts) | `coach.py` |
-| 2. Le comment | Quel type de chip, combien de temps ? | **Branche A** (chiffres préliminaires ci-dessous) | `src/build_tables.py` + `analysis/` |
-| 3. L'action | Que devient l'action ? | **Fait** : lancer +0,5 s, +0,8 yd, mais plus de sacks | `coach.py`, `decision.py` |
-| 4. Le QB | Faut-il lancer au joueur qui a chippé ? | **Fait, à consolider (branche B)** : non en temps normal, oui sur les sacks (36/88 démarqués) | `decision.py` |
-| → Outil | Chip ou pas, lequel, combien de temps, et la lecture de secours | **Branche C** | `app/` |
+| 1. Le rusher | Le chip gêne-t-il le rusher visé ? | **Fait** : -26 %, même rusher chippé ou non (10,5 % contre 14,1 %, IC95 -6,0 à -1,3 pts) | `coach.py` |
+| 2. Le comment | Quel type de chip, combien de temps ? | **Fait (A)** : TE en ligne -3,6 pts (OR 0,71) ; chip > 1 s : 8,5 % contre 12,9 %, mais départ en route à 2,20 s contre 1,50 s | `analysis/mecanique.py`, `results/A.md` |
+| 3. L'action | Que devient l'action ? | **Fait** : lancer +0,5 s, +0,8 yd ; à situation égale, pas plus de sacks de façon significative (8,4 % contre 6,7 %, IC95 de l'écart -0,1 à +3,4 pts) | `coach.py`, `decision.py` |
+| 4. Le QB | Faut-il lancer au joueur qui a chippé ? | **Fait (B)** : non en temps normal (+4,0 yd pour la cible choisie), oui sur les sacks (démarqué dans 36 des 88 sacks avec chip) | `decision.py`, `results/B.md` |
+| → Outil | Chip ou pas, lequel, combien de temps, et le plan B | **Fait (C)** : app web Chip Advisor, https://chip-advisor-rouge.vercel.app | `app/` |
 
 ## Architecture du repo
 
@@ -27,9 +27,11 @@ analysis/                 # NOUVEAU, branche A uniquement
   mecanique.py            #   type et durée du chip -> figures/A_*.png + results/A.md
 figures/                  # NOUVEAU : A_*.png (branche A), B_*.png (branche B)
 results/                  # NOUVEAU : A.md, B.md = les chiffres clés que la branche C reprend
-app/                      # NOUVEAU, branche C uniquement
-  advisor.py              #   Streamlit « Chip Advisor »
-  llm.py                  #   (optionnel) phrase de recommandation via Amazon Bedrock
+app/                      # NOUVEAU, branche C uniquement : app web « Chip Advisor »
+  server.py               #   serveur local (python app/server.py)
+  export_static.py        #   exporte static/data/ pour Vercel
+  static/                 #   front HTML/CSS/JS (verdict, comparaison, replay terrain des vraies actions)
+  llm.py, api/brief.js    #   briefing du coach via Mistral (local / Vercel)
 coach.py, decision.py, chart.py, animate_sack.py   # existants, branche B uniquement
 insight.png, chip_sack.png, chip_sack.html         # existants, branche B uniquement
 README.md, PLAN.md        # branche C uniquement (après le merge de A et B)
@@ -104,7 +106,10 @@ L'analyse existe déjà. À faire :
 
 ## Branche C : `feat/app-pitch` (outil + pitch + AWS)
 
-**Responsable : ______** · fichiers : `app/`, puis `README.md` et `PLAN.md` après le merge de A et B
+**Responsable : Alvaro** · fichiers : `app/`, puis `README.md` et `PLAN.md` après le merge de A et B
+
+**Réalisé** : app web (HTML/JS + serveur Python) à la place de Streamlit, briefing via Mistral à la place de Bedrock,
+déployée sur Vercel (https://chip-advisor-rouge.vercel.app).
 
 1. `app/advisor.py` (Streamlit, `streamlit run app/advisor.py`). Pas de modèle à entraîner, des taux observés :
    - Entrées : situation (1er/2e down, 3e/4e et court, 3e/4e et long), qualité de l'edge rusher (quartile de
