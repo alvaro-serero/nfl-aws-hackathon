@@ -13,6 +13,7 @@ Definitions (tune the constants below if needed):
   - rusher "arrives" when he gets within NEAR_QB_YD of the QB; time_to_qb_s is NaN if he never does
 """
 import glob
+import os
 from multiprocessing import Pool
 
 import numpy as np
@@ -112,6 +113,7 @@ def process_game(args):
 
 
 def main():
+    os.makedirs(OUT, exist_ok=True)
     pff = pd.read_csv(f"{DATA}/pffScoutingData.csv")
     plays = pd.read_csv(f"{DATA}/plays.csv")
     players = pd.read_csv(f"{DATA}/players.csv")[["nflId", "displayName", "officialPosition"]]
