@@ -25,17 +25,19 @@ Testées sur les 122 matchs (39 000 routes de WR/TE/RB, 7 583 passes lancées, c
 
 ### Résultat
 - **En temps normal, le QB a raison de l'ignorer** : sur 928 passes où il n'est pas ciblé, l'option choisie vaut
-  +3,4 yards attendus (IC95 : 3,2 à 3,7) et +6,9 pts de probabilité de réussite. Sur 3e et long : +16 pts.
-- **Mais sur les sacks, c'est la soupape** : sur 97 sacks avec chip, le joueur qui chippe était démarqué (≥ 3 yd) au
-  moment du sack dans **65 %** des cas, contre 39 % pour les autres receveurs ; démarqué depuis ≥ 1 s au-delà de la
-  ligne : 37 % contre 24 % (z ≈ 3). Une passe vers lui valait ≈ +6 yards attendus (72 % de complétion), au lieu d'un
-  sack moyen de -7,4 yards.
+  +4,0 yards attendus (IC95 : 3,7 à 4,3). Sur 3e et long : +16 pts de probabilité de réussite.
+- **Mais sur les sacks, c'est la soupape** (chiffres corrigés après relecture `critic`) : sur 88 sacks avec chip, le
+  TE/RB qui a chippé était démarqué (≥ 3 yd) au-delà de la ligne depuis ≥ 1 s dans 36 cas ; 36 % des joueurs qui
+  chippent contre 23 % des autres receveurs à profondeur égale. Comparé aux autres receveurs des mêmes actions
+  (plus profonds), l'écart se réduit à 36 % contre 30 % et n'est plus significatif. Sack moyen : -7,4 yd.
+- **Corrigé** : l'ancien « 65 % contre 39 % » comptait comme démarqués des joueurs encore derrière la ligne et comparait
+  des profondeurs très différentes ; il est abandonné.
 - **Recommandation** : faire du joueur qui a chippé la lecture de secours de la progression ; vers 3 s, lâcher le
   ballon vers lui plutôt que de le garder.
 
 ### Validation externe (nos chiffres retrouvent ceux de NGS)
-- Réception après un chip : 82,4 % réels, 82,3 % prédits par le modèle ; NGS publie 80,2 %.
-- Temps avant le lancer : 3,1 s avec chip contre 2,6 s sans, soit la « demi-seconde » de NGS.
+- Réception après un chip : 82,4 % réels (IC95 76-88 %, n = 159), 82,6 % prédits par le modèle entraîné sur les semaines 1-6 ; NGS publie 80,2 %.
+- Temps avant le lancer (médiane) : 3,1 s avec chip contre 2,6 s sans, soit la « demi-seconde » de NGS.
 
 ### Originalité : déjà connu ou pas ?
 - **Le concept est connu des coachs** : le « checkdown » (passe courte au RB/TE en dernier recours, souvent sous
@@ -46,8 +48,7 @@ Testées sur les 122 matchs (39 000 routes de WR/TE/RB, 7 583 passes lancées, c
   sur les actions avec chip : 9,3 contre 7,2 air yards) et PFF (« chip percentage » des pass rushers).
   ([NFL.com](https://www.nfl.com/_amp/the-secret-weapon-nfl-offenses-are-using-to-buy-qbs-an-extra-half-second),
   [PFF](https://www.pff.com/news/nfl-chip-percentage-week-5))
-- **Ce qu'on n'a trouvé nulle part** : la mesure, au tracking, de la soupape après un chip au moment du sack (65 % contre
-  39 %), et la comparaison de décision « chippeur contre cible choisie » dans la même action.
+- **Ce qu'on n'a trouvé nulle part** : la mesure, au tracking, de la soupape après un chip au moment du sack (36 sacks sur 88), et la comparaison de décision « chippeur contre cible choisie » dans la même action.
 - **BDB 2023** : thème protection / pass rush ; aucun notebook sur le chip trouvé, mais la recherche est polluée par
   « chip » (les puces de tracking). Pas une preuve d'absence.
 - **Verdict** : principe connu, **quantification nouvelle**. Originalité notée 3/5 (au lieu de 4). À présenter comme
@@ -55,10 +56,10 @@ Testées sur les 122 matchs (39 000 routes de WR/TE/RB, 7 583 passes lancées, c
 
 ### Limites
 - Modèle simple : ignore la vitesse de retour du défenseur et la visibilité du QB sous pression.
-- 8 semaines de 2021, 97 sacks avec chip.
+- 8 semaines de 2021, 88 sacks avec chip (TE/RB).
 
-### Livrables prêts (non poussés, relecture `critic` en cours)
-`decision.py` (analyse), `chart.py` → `insight.png`, `animate_chip.py` / `animate_sack.py` → animations, `README.md`.
+### Livrables (poussés, relus par `critic`)
+`decision.py` (analyse), `chart.py` → `insight.png`, `animate_sack.py` → `chip_sack.png` / `chip_sack.html`, `README.md`.
 
 ## 2. Time-to-Win (WR/TE)
 
