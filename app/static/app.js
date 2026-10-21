@@ -7,6 +7,7 @@ const QS = ["Faible", "Moyen", "Bon", "Élite"].map((q) => [q, q]);
 const PLAYERS = [["TE", "TE"], ["RB", "RB"]];
 const COLORS = { off: "#2E6BD6", def: "#EC7A2F", chalk: "#F3F6F1", ink: "#13212E", yellow: "#FFD23F", red: "#E5484D", los: "#4C8DF6" };
 const state = { sit: "all", q: "Élite", player: "TE", rusher: "", play: null, advice: null };
+let RUSHERS = {};  // name -> quartile
 const paint = {};
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -40,11 +41,12 @@ async function init() {
   seg("#sit", SITS, "sit");
   seg("#q", QS, "q");
   seg("#player", PLAYERS, "player");
-  const m = await (await fetch("/api/meta")).json();
-  $("#rushers").innerHTML = m.rushers.map((n) => `<option value="${n}">`).join("");
+  RUSHERS = (await (await fetch("/static/data/meta.json")).json()).rushers;
+  $("#rushers").innerHTML = Object.keys(RUSHERS).map((n) => `<option value="${n}">`).join("");
   $("#rusher").addEventListener("change", (e) => {
     const v = e.target.value.trim();
-    state.rusher = m.rushers.includes(v) ? v : "";
+    state.rusher = RUSHERS[v] ? v : "";
+    if (state.rusher) state.q = RUSHERS[v];
     loadAdvice();
   });
   $("#brief-btn").addEventListener("click", brief);
@@ -54,8 +56,8 @@ async function init() {
 
 // ---------- Verdict ----------
 async function loadAdvice() {
-  const qs = new URLSearchParams({ sit: state.sit, q: state.q, player: state.player, rusher: state.rusher });
-  const a = await (await fetch(`/api/advice?${qs}`)).json();
+  const qi = QS.findIndex(([q]) => q === state.q);
+  const a = await (await fetch(`/static/data/advice/${state.sit}_${qi}_${state.player}.json`)).json();
   if (a.error) { $("#v-title").textContent = "Données indisponibles"; $("#v-sub").textContent = a.error; return; }
   state.advice = a;
   state.q = a.quartile;
@@ -143,7 +145,7 @@ async function selectPlay(p) {
   });
   if (same && F.data) return;
   $("#play-title").textContent = "Chargement de l’action…";
-  const d = await (await fetch(`/api/play?g=${p.g}&p=${p.p}&chipper=${p.chipper}&rusher=${p.rusher}`)).json();
+  const d = await (await fetch(`/static/data/plays/${p.g}_${p.p}_${p.chipper}.json`)).json();
   if (d.error) { $("#play-title").textContent = "Action indisponible"; $("#play-sub").textContent = d.error; return; }
   setupField(d);
 }
