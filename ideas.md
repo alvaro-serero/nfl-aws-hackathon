@@ -5,7 +5,7 @@ Testées sur les 122 matchs (39 000 routes de WR/TE/RB, 7 583 passes lancées, c
 
 | # | Idée | Pertinence ×2 | Exécution | Communication | Originalité | Total /25 |
 |---|---|---|---|---|---|---|
-| 1 | **Le chip oublié** (TE/RB) | 10 | 4 | 5 | 5 | **24** |
+| 1 | **Le chip oublié** (TE/RB) | 10 | 4 | 5 | 4 | **23** |
 | 2 | **Time-to-Win** (WR/TE) | 8 | 4 | 4 | 4 | **20** |
 | 3 | **Le vrai mismatch du TE** (man) | 8 | 4 | 4 | 3 | **19** |
 
@@ -20,13 +20,21 @@ Testées sur les 122 matchs (39 000 routes de WR/TE/RB, 7 583 passes lancées, c
 | RB qui chippe | 8,3 yd | 88 % | 11,6 % |
 | RB sans chip | 5,9 yd | 76 % | 19,3 % |
 
-- Quand on le cible quand même, le joueur qui a chippé est complété à **82 %**, contre 70 % sans chip (159 ciblages).
+- Quand on le cible quand même, le joueur qui a chippé est complété à 82 %, contre 70 % sans chip (159 ciblages).
 - **Insight** : chipper ne coûte pas de séparation, au contraire. Le joueur qui chippe devient le plus démarqué du terrain,
-  parce que la défense l'oublie ; mais le QB l'oublie aussi.
-- **Originalité** : NGS a publié le bénéfice du chip pour la protection (pression à 3,43 s contre 2,84 s), pas cet angle.
+  parce que la défense l'oublie ; mais le QB l'oublie aussi. C'est une option ouverte que les QB ignorent.
+- **Déjà publié par NGS** ([NFL.com](https://www.nfl.com/_amp/the-secret-weapon-nfl-offenses-are-using-to-buy-qbs-an-extra-half-second)) :
+  - le bénéfice pour la protection (pression à 3,43 s contre 2,84 s en duel simple) ;
+  - le taux de réception après un chip : 80,2 %, contre 74,7 % pour l'ensemble des RB et TE.
+  
+  Notre 82 % n'est donc **pas original**. On le cite comme source, et il devient un argument : quand on lui lance, ça marche.
+- **Notre angle original** : la séparation au lancer après un chip (le plus démarqué du terrain) mise face à son taux de
+  ciblage (30 à 40 % plus bas). Aucune source trouvée ne relie les deux.
 - **Échantillon** : 1 155 routes après un chip, 41 joueurs avec au moins 10 chips, 32 équipes.
 - **Pre-mortem** : il est démarqué parce qu'il part tard et court (dans le flat), donc « ouvert mais inutile ».
   À tester en premier : comparer à profondeur égale.
+- **Visuel prévu** : animer une vraie action de chip à partir du tracking (le TE touche le rusher, part en route,
+  se retrouve seul), plutôt qu'une vidéo externe.
 
 ## 2. Time-to-Win (WR/TE)
 
